@@ -5,7 +5,7 @@ references.style.display = 'flex'
 references.style.justifyContent = 'center'
 document.body.appendChild(references)
 
-const rowSize = 5
+const rowSize = 10
 const gridSize = rowSize * rowSize
 
 function makeGrid(data: number[]) {
@@ -20,8 +20,8 @@ function makeGrid(data: number[]) {
   for (let i = 0; i < data.length; i++) {
     const active = data[i] === 1
     const div = document.createElement('div')
-    div.style.width = '16px'
-    div.style.height = '16px'
+    div.style.width = '8px'
+    div.style.height = '8px'
     div.style.backgroundColor = active ? '#aaa' : '#ddd'
     div.style.outline = '1px solid #000'
     divs.push(div)
@@ -67,8 +67,8 @@ function makeTestGrid(data: number[]) {
   for (let i = 0; i < data.length; i++) {
     const active = data[i] === 1
     const div = document.createElement('div')
-    div.style.width = '20px'
-    div.style.height = '20px'
+    div.style.width = '10px'
+    div.style.height = '10px'
     div.style.backgroundColor = active ? '#aaa' : '#ddd'
     div.style.outline = '1px solid #000'
     divs.push(div)
@@ -145,7 +145,8 @@ const tests: number[][] = []
 for (let t = 0; t < 14; t++) {
   const test: number[] = []
   for (let i = 0; i < gridSize; i++) {
-    const probability = i % rowSize === 0 || i % rowSize === 4 ? 0.8 : 0.6
+    const col = i % rowSize
+    const probability = col < 2 || col > rowSize - 3 ? 0.8 : 0.6
     test.push(hash12(t, i) > probability ? 1 : 0)
   }
   tests.push(test)
@@ -163,15 +164,6 @@ for (let t = 0; t < 30; t++) {
   }
   tests.push(test)
 }
-
-// push a hand-picked test
-tests.push([
-  0, 1, 1, 1, 0,
-  0, 1, 0, 0, 1,
-  0, 1, 1, 1, 0,
-  0, 1, 0, 1, 0,
-  0, 1, 1, 1, 0,
-])
 
 for (let i = 0; i < tests.length; i++) {
   makeTestGrid(tests[i])
