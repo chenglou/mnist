@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "start": "bun build index.ts --outfile out/bundle.js --watch"
+  },
+  "dependencies": { "node-canvas": "^2.9.0" }
+}
