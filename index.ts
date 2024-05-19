@@ -6,18 +6,15 @@ references.style.justifyContent = 'center'
 document.body.appendChild(references)
 
 function makeGrid(data: number[][]) {
-  const container = document.createElement('div')
-  container.style.display = 'flex'
-  container.style.flexDirection = 'column'
-  container.style.margin = '8px'
-  references.appendChild(container)
+  const grid = document.createElement('div')
+  grid.style.display = 'grid'
+  grid.style.margin = '8px'
+  grid.style.gridTemplateColumns = 'repeat(5, 1fr)'
+  grid.style.gridTemplateRows = 'repeat(5, 1fr)'
+  references.appendChild(grid)
 
   const divs: HTMLDivElement[] = []
   for (let i = 0; i < data.length; i++) {
-    const row = document.createElement('div')
-    row.style.display = 'flex'
-    row.style.flexDirection = 'row'
-    container.appendChild(row)
     for (let j = 0; j < data[i].length; j++) {
       const active = data[i][j] === 1
       const div = document.createElement('div')
@@ -26,7 +23,7 @@ function makeGrid(data: number[][]) {
       div.style.backgroundColor = active ? '#aaa' : '#ddd'
       div.style.outline = '1px solid #000'
       divs.push(div)
-      row.appendChild(div)
+      grid.appendChild(div)
     }
   }
 }
@@ -50,18 +47,23 @@ testsContainer.style.margin = '16px'
 document.body.appendChild(testsContainer)
 
 function makeTestGrid(data: number[][]) {
-  const testContainer = document.createElement('div')
-  testContainer.style.display = 'flex'
-  testContainer.style.flexDirection = 'column'
-  testContainer.style.alignItems = 'center'
-  testContainer.style.margin = '16px'
-  testsContainer.appendChild(testContainer)
+  const container = document.createElement('div')
+  container.style.display = 'flex'
+  container.style.flexDirection = 'column'
+  container.style.alignItems = 'center'
+  container.style.margin = '16px'
+  container.style.gap = '12px'
+  testsContainer.appendChild(container)
+
+  const grid = document.createElement('div')
+  grid.style.display = 'grid'
+  grid.style.gridTemplateColumns = 'repeat(5, 1fr)'
+  grid.style.gridTemplateRows = 'repeat(5, 1fr)'
+  grid.style.alignItems = 'center'
+  container.appendChild(grid)
+
   const divs: HTMLDivElement[] = []
   for (let i = 0; i < data.length; i++) {
-    const row = document.createElement('div')
-    row.style.display = 'flex'
-    row.style.flexDirection = 'row'
-    testContainer.appendChild(row)
     for (let j = 0; j < data[i].length; j++) {
       const active = data[i][j] === 1
       const div = document.createElement('div')
@@ -70,14 +72,14 @@ function makeTestGrid(data: number[][]) {
       div.style.backgroundColor = active ? '#aaa' : '#ddd'
       div.style.outline = '1px solid #000'
       divs.push(div)
-      row.appendChild(div)
+      grid.appendChild(div)
     }
   }
 
   const labelsContainer = document.createElement('div')
   labelsContainer.style.display = 'flex'
   labelsContainer.style.flexDirection = 'column'
-  labelsContainer.style.margin = '8px'
+  container.appendChild(labelsContainer)
   const scores = scoresForGuess(data)
   const bestScore = Math.max(...scores)
   const maxScore = 25
@@ -119,8 +121,6 @@ function makeTestGrid(data: number[][]) {
     labelContainer.appendChild(scoreLabel)
     labelsContainer.appendChild(labelContainer)
   }
-
-  testContainer.appendChild(labelsContainer)
 }
 
 function scoresForGuess(guess: number[][]): number[] {
