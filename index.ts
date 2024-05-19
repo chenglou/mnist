@@ -134,7 +134,8 @@ for (let t = 0; t < 100; t++) {
   for (let i = 0; i < 5; i++) {
     const row: number[] = []
     for (let j = 0; j < 5; j++) {
-      row.push(Math.random() > 0.5 ? 1 : 0)
+      const probability = j === 0 || j === 4 ? 0.8 : 0.6
+      row.push(Math.random() > probability ? 1 : 0)
     }
     test.push(row)
   }
