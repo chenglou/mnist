@@ -81,22 +81,38 @@ function makeTestGrid(data: number[][]) {
   const scores = scoresForGuess(data)
   const bestScore = Math.max(...scores)
   const maxScore = 25
-  const scoreBarMaxSizeX = 80
+  const scoreBarMaxSizeX = 88
   for (let i = 0; i < scores.length; i++) {
     const labelContainer = document.createElement('div')
     labelContainer.style.display = 'flex'
+    labelContainer.style.justifyContent = 'space-between'
     labelContainer.style.gap = '4px'
     labelContainer.style.alignItems = 'center'
+    labelContainer.style.width = `${scoreBarMaxSizeX + 40 + 8}px`
     const numberLabel = document.createElement('div')
-    numberLabel.innerText = i.toString()
-    numberLabel.style.fontSize = '20px'
+    numberLabel.style.textAlign = 'right'
+    numberLabel.style.flexShrink = '0'
+    numberLabel.innerText = `${i}`
+    numberLabel.style.fontSize = '18px'
+    numberLabel.style.width = `20px`
     const scoreBar = document.createElement('div')
-    scoreBar.style.width = `${scores[i] / maxScore * scoreBarMaxSizeX}px`
-    scoreBar.style.height = '20px'
-    scoreBar.style.backgroundColor = scores[i] === bestScore ? '#aaa' : '#ddd'
+    scoreBar.style.flexShrink = '0'
+    scoreBar.style.height = '16px'
+    scoreBar.style.width = `${scoreBarMaxSizeX}px`
+    scoreBar.style.outline = '1px solid #999'
+    const scoreBarFill = document.createElement('div')
+    scoreBarFill.style.height = '16px'
+    const width = Math.abs(scores[i] / maxScore * scoreBarMaxSizeX / 2)
+    scoreBarFill.style.width = `${width}px`
+    scoreBarFill.style.marginLeft = `${scoreBarMaxSizeX / 2 - (scores[i] >= 0 ? 0 : width)}px`
+    scoreBarFill.style.backgroundColor = scores[i] === bestScore ? '#aaa' : '#ddd'
+    scoreBar.appendChild(scoreBarFill)
+
     const scoreLabel = document.createElement('div')
+    scoreLabel.style.flexShrink = '0'
     scoreLabel.innerText = scores[i].toString()
-    scoreLabel.style.fontSize = '20px'
+    scoreLabel.style.fontSize = '18px'
+    scoreLabel.style.width = `20px`
 
     labelContainer.appendChild(numberLabel)
     labelContainer.appendChild(scoreBar)
@@ -128,8 +144,8 @@ function scoresForGuess(guess: number[][]): number[] {
 }
 
 const tests: number[][][] = []
-// populate tets with random numbers
-for (let t = 0; t < 100; t++) {
+// populate tests with random stuff
+for (let t = 0; t < 30; t++) {
   const test: number[][] = []
   for (let i = 0; i < 5; i++) {
     const row: number[] = []
@@ -141,6 +157,23 @@ for (let t = 0; t < 100; t++) {
   }
   tests.push(test)
 }
+// populate tests more, with less random stuff
+for (let t = 0; t < 30; t++) {
+  // choose an existing number from numbers, aka index 0=9
+  const testIndex = Math.floor(Math.random() * numbers.length)
+  const test = JSON.parse(JSON.stringify(numbers[testIndex]))
+  for (let i = 0; i < test.length; i++) {
+    for (let j = 0; j < test[i].length; j++) {
+      if (test[i][j] === 0) {
+        test[i][j] = 1
+      } else {
+        test[i][j] = 0
+      }
+    }
+  }
+  tests.push(test)
+}
+
 // push a hand-picked test
 tests.push([
   [0, 1, 1, 1, 0],
