@@ -5,26 +5,27 @@ references.style.display = 'flex'
 references.style.justifyContent = 'center'
 document.body.appendChild(references)
 
-function makeGrid(data: number[][]) {
+const rowSize = 5
+const gridSize = rowSize * rowSize
+
+function makeGrid(data: number[]) {
   const grid = document.createElement('div')
   grid.style.display = 'grid'
   grid.style.margin = '8px'
-  grid.style.gridTemplateColumns = 'repeat(5, 1fr)'
-  grid.style.gridTemplateRows = 'repeat(5, 1fr)'
+  grid.style.gridTemplateColumns = `repeat(${rowSize}, 1fr)`
+  grid.style.gridTemplateRows = `repeat(${rowSize}, 1fr)`
   references.appendChild(grid)
 
   const divs: HTMLDivElement[] = []
   for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      const active = data[i][j] === 1
-      const div = document.createElement('div')
-      div.style.width = '16px'
-      div.style.height = '16px'
-      div.style.backgroundColor = active ? '#aaa' : '#ddd'
-      div.style.outline = '1px solid #000'
-      divs.push(div)
-      grid.appendChild(div)
-    }
+    const active = data[i] === 1
+    const div = document.createElement('div')
+    div.style.width = '16px'
+    div.style.height = '16px'
+    div.style.backgroundColor = active ? '#aaa' : '#ddd'
+    div.style.outline = '1px solid #000'
+    divs.push(div)
+    grid.appendChild(div)
   }
 }
 
@@ -46,7 +47,7 @@ testsContainer.style.flexWrap = 'wrap'
 testsContainer.style.margin = '16px'
 document.body.appendChild(testsContainer)
 
-function makeTestGrid(data: number[][]) {
+function makeTestGrid(data: number[]) {
   const container = document.createElement('div')
   container.style.display = 'flex'
   container.style.flexDirection = 'column'
@@ -57,23 +58,21 @@ function makeTestGrid(data: number[][]) {
 
   const grid = document.createElement('div')
   grid.style.display = 'grid'
-  grid.style.gridTemplateColumns = 'repeat(5, 1fr)'
-  grid.style.gridTemplateRows = 'repeat(5, 1fr)'
+  grid.style.gridTemplateColumns = `repeat(${rowSize}, 1fr)`
+  grid.style.gridTemplateRows = `repeat(${rowSize}, 1fr)`
   grid.style.alignItems = 'center'
   container.appendChild(grid)
 
   const divs: HTMLDivElement[] = []
   for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      const active = data[i][j] === 1
-      const div = document.createElement('div')
-      div.style.width = '20px'
-      div.style.height = '20px'
-      div.style.backgroundColor = active ? '#aaa' : '#ddd'
-      div.style.outline = '1px solid #000'
-      divs.push(div)
-      grid.appendChild(div)
-    }
+    const active = data[i] === 1
+    const div = document.createElement('div')
+    div.style.width = '20px'
+    div.style.height = '20px'
+    div.style.backgroundColor = active ? '#aaa' : '#ddd'
+    div.style.outline = '1px solid #000'
+    divs.push(div)
+    grid.appendChild(div)
   }
 
   const labelsContainer = document.createElement('div')
@@ -82,7 +81,7 @@ function makeTestGrid(data: number[][]) {
   container.appendChild(labelsContainer)
   const scores = scoresForGuess(data)
   const bestScore = Math.max(...scores)
-  const maxScore = 25
+  const maxScore = gridSize
   const scoreBarMaxSizeX = 88
   for (let i = 0; i < scores.length; i++) {
     const labelContainer = document.createElement('div')
@@ -123,19 +122,17 @@ function makeTestGrid(data: number[][]) {
   }
 }
 
-function scoresForGuess(guess: number[][]): number[] {
+function scoresForGuess(guess: number[]): number[] {
   const scores: number[] = []
   // iterate through all the numbers and compare against the guess
   for (let n = 0; n < numbers.length; n++) {
     const number = numbers[n]
     let scoreSoFar = 0
     for (let i = 0; i < number.length; i++) {
-      for (let j = 0; j < number[i].length; j++) {
-        if (number[i][j] === guess[i][j]) {
-          scoreSoFar++
-        } else {
-          scoreSoFar--
-        }
+      if (number[i] === guess[i]) {
+        scoreSoFar++
+      } else {
+        scoreSoFar--
       }
     }
     scores.push(scoreSoFar)
@@ -143,17 +140,13 @@ function scoresForGuess(guess: number[][]): number[] {
   return scores
 }
 
-const tests: number[][][] = []
+const tests: number[][] = []
 // populate tests with random stuff
 for (let t = 0; t < 14; t++) {
-  const test: number[][] = []
-  for (let i = 0; i < 5; i++) {
-    const row: number[] = []
-    for (let j = 0; j < 5; j++) {
-      const probability = j === 0 || j === 4 ? 0.8 : 0.6
-      row.push(hash12(t, i * j) > probability ? 1 : 0)
-    }
-    test.push(row)
+  const test: number[] = []
+  for (let i = 0; i < gridSize; i++) {
+    const probability = i % rowSize === 0 || i % rowSize === 4 ? 0.8 : 0.6
+    test.push(hash12(t, i) > probability ? 1 : 0)
   }
   tests.push(test)
 }
@@ -163,11 +156,9 @@ for (let t = 0; t < 30; t++) {
   const testIndex = Math.floor(hash12(t, 0) * numbers.length)
   const test = JSON.parse(JSON.stringify(numbers[testIndex]))
   for (let i = 0; i < test.length; i++) {
-    for (let j = 0; j < test[i].length; j++) {
-      if (hash12(t, i * j) > 0.8) {
-        // flip it from 1 to 0 and 0 to 1
-        test[i][j] = 1 - test[i][j]
-      }
+    if (hash12(t, i) > 0.9) {
+      // flip it from 1 to 0 and 0 to 1
+      test[i] = 1 - test[i]
     }
   }
   tests.push(test)
@@ -175,11 +166,11 @@ for (let t = 0; t < 30; t++) {
 
 // push a hand-picked test
 tests.push([
-  [0, 1, 1, 1, 0],
-  [0, 1, 0, 0, 1],
-  [0, 1, 1, 1, 0],
-  [0, 1, 0, 1, 0],
-  [0, 1, 1, 1, 0],
+  0, 1, 1, 1, 0,
+  0, 1, 0, 0, 1,
+  0, 1, 1, 1, 0,
+  0, 1, 0, 1, 0,
+  0, 1, 1, 1, 0,
 ])
 
 for (let i = 0; i < tests.length; i++) {
