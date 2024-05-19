@@ -151,7 +151,7 @@ for (let t = 0; t < 14; t++) {
     const row: number[] = []
     for (let j = 0; j < 5; j++) {
       const probability = j === 0 || j === 4 ? 0.8 : 0.6
-      row.push(Math.random() > probability ? 1 : 0)
+      row.push(hash12(t, i * j) > probability ? 1 : 0)
     }
     test.push(row)
   }
@@ -160,11 +160,11 @@ for (let t = 0; t < 14; t++) {
 // populate tests more, with less random stuff
 for (let t = 0; t < 30; t++) {
   // choose an existing number from numbers, aka index 0=9
-  const testIndex = Math.floor(Math.random() * numbers.length)
+  const testIndex = Math.floor(hash12(t, 0) * numbers.length)
   const test = JSON.parse(JSON.stringify(numbers[testIndex]))
   for (let i = 0; i < test.length; i++) {
     for (let j = 0; j < test[i].length; j++) {
-      if (Math.random() > 0.9) {
+      if (hash12(t, i * j) > 0.8) {
         // flip it from 1 to 0 and 0 to 1
         test[i][j] = 1 - test[i][j]
       }
@@ -184,4 +184,17 @@ tests.push([
 
 for (let i = 0; i < tests.length; i++) {
   makeTestGrid(tests[i])
+}
+
+function fract(x: number) {
+  return x - Math.floor(x)
+}
+function hash12(a: number, b: number) {
+  let aa = fract(a * .1031)
+  let bb = fract(b * .1031)
+  let p3_0 = aa * .1031, p3_1 = bb * .1031, p3_2 = aa * .1031
+  let q3_0 = p3_0 + 33.33, q3_1 = p3_1 + 33.33, q3_2 = p3_2 + 33.33
+  let dotted = p3_2 * q3_0 + p3_0 * q3_1 + p3_1 * q3_2
+  p3_2 += dotted; p3_0 += dotted; p3_1 += dotted
+  return fract((p3_2 + p3_0) * p3_1)
 }
