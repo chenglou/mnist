@@ -145,7 +145,7 @@ function scoresForGuess(guess: number[][]): number[] {
 
 const tests: number[][][] = []
 // populate tests with random stuff
-for (let t = 0; t < 30; t++) {
+for (let t = 0; t < 14; t++) {
   const test: number[][] = []
   for (let i = 0; i < 5; i++) {
     const row: number[] = []
@@ -164,10 +164,9 @@ for (let t = 0; t < 30; t++) {
   const test = JSON.parse(JSON.stringify(numbers[testIndex]))
   for (let i = 0; i < test.length; i++) {
     for (let j = 0; j < test[i].length; j++) {
-      if (test[i][j] === 0) {
-        test[i][j] = 1
-      } else {
-        test[i][j] = 0
+      if (Math.random() > 0.9) {
+        // flip it from 1 to 0 and 0 to 1
+        test[i][j] = 1 - test[i][j]
       }
     }
   }
